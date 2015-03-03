@@ -4,21 +4,21 @@ angular.module('myApp', []).factory('gameLogic', function() {
 
   /** Returns the initial Oware board, which is a 2x6 matrix containing 4. */
   function getInitialBoard() {
-    return [[4, 4, 4, 4, 4, 4],
-            [4, 4, 4, 4, 4, 4]];
+	return [[4, 4, 4, 4, 4, 4],
+			[4, 4, 4, 4, 4, 4]];
   }
   
    function isTie(player1Score, player2Score) {
-    var score1 = player1Score;
-	var score2 = player2Score;
-	if(score1 == 24 && score2 == 24) {
-		return true;
+		var score1 = player1Score;
+		var score2 = player2Score;
+		if(score1 == 24 && score2 == 24) {
+			return true;
 	}
 	return false;
   }
   
    function getWinner(player1Score, player2Score) {
-    var score1 = player1Score;
+	var score1 = player1Score;
 	var score2 = player2Score;
 	var winner = isWinner(score1, score2);
 	if (winner == true){ 
@@ -33,7 +33,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
   }
 	
 	function isWinner(player1Score, player2Score) {
-    var score1 = player1Score;
+	var score1 = player1Score;
 	var score2 = player2Score;
 	if(score1 > 24 || score2 > 24) {
 		return true;
@@ -42,45 +42,45 @@ angular.module('myApp', []).factory('gameLogic', function() {
   }
 	
 	function isMoveOk(params) {
-    var move = params.move;
-    var turnIndexBeforeMove = params.turnIndexBeforeMove;
-    var stateBeforeMove = params.stateBeforeMove;
+		var move = params.move;
+		var turnIndexBeforeMove = params.turnIndexBeforeMove;
+		var stateBeforeMove = params.stateBeforeMove;
 	
-	// Example stateBeforeMove:
-      // [{set: {key: 'board', value: [[4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4]]}},
-	  //  {set: {key: 'player1Score' , value: 0}},
-	  //  {set: {key: 'player2Score' , value: 0}}
-	  // ]
-	
-    // The state and turn after move are not needed in Oware (or in any game where all state is public).
-    //var turnIndexAfterMove = params.turnIndexAfterMove;
-    //var stateAfterMove = params.stateAfterMove;
+		// Example stateBeforeMove:
+		  // [{set: {key: 'board', value: [[4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4]]}},
+		  //  {set: {key: 'player1Score' , value: 0}},
+		  //  {set: {key: 'player2Score' , value: 0}}
+		  // ]
+		
+		// The state and turn after move are not needed in Oware (or in any game where all state is public).
+		//var turnIndexAfterMove = params.turnIndexAfterMove;
+		//var stateAfterMove = params.stateAfterMove;
 
-    // We can assume that turnIndexBeforeMove and stateBeforeMove are legal, and we need
-    // to verify that move is legal.
-    try {
-      // Example move:
-      // [{setTurn: {turnIndex : 1},
-      //  {set: {key: 'board', value: [[4, 4, 5, 5, 5, 5], [4, 4, 4, 4, 4, 0]]}},
-      //  {set: {key: 'delta', value: {row: 1, col: 6}}},
-	  //  {set: {key: 'player1Score' , value: 0}},
-	  //  {set: {key: 'player2Score' , value: 0}}
-	  // ]
-      var deltaValue = move[2].set.value;
-      var row = deltaValue.row;
-      var col = deltaValue.col;
-      var board = stateBeforeMove[0].set.value;
-	  var previousPlayer1Score = stateBeforeMove[1].set.value;
-	  var previousPlayer2Score = stateBeforeMove[2].set.value;
-      var expectedMove = createMove(board, row, col, turnIndexBeforeMove, previousPlayer1Score, previousPlayer2Score);
-      if (!angular.equals(move, expectedMove)) {
-        return false;
-      }
-    } catch (e) {
-      // if there are any exceptions then the move is illegal
-      return false;
-    }
-    return true;
+		// We can assume that turnIndexBeforeMove and stateBeforeMove are legal, and we need
+		// to verify that move is legal.
+		try {
+			// Example move:
+			// [{setTurn: {turnIndex : 1},
+			//  {set: {key: 'board', value: [[4, 4, 5, 5, 5, 5], [4, 4, 4, 4, 4, 0]]}},
+			//  {set: {key: 'delta', value: {row: 1, col: 6}}},
+			//  {set: {key: 'player1Score' , value: 0}},
+			//  {set: {key: 'player2Score' , value: 0}}
+			// ]
+			var deltaValue = move[2].set.value;
+			var row = deltaValue.row;
+			var col = deltaValue.col;
+			var board = stateBeforeMove[0].set.value;
+			var previousPlayer1Score = stateBeforeMove[1].set.value;
+			var previousPlayer2Score = stateBeforeMove[2].set.value;
+			var expectedMove = createMove(board, row, col, turnIndexBeforeMove, previousPlayer1Score, previousPlayer2Score);
+			if (!angular.equals(move, expectedMove)) {
+				return false;
+		  	}
+		} catch (e) {
+	  		// if there are any exceptions then the move is illegal
+	  		return false;
+		}
+		return true;
   }
 
   /**
@@ -89,18 +89,18 @@ angular.module('myApp', []).factory('gameLogic', function() {
    */
   /*
   function getPossibleMoves(board, turnIndexBeforeMove,player1Score, player2Score ) {
-    var possibleMoves = [];
-    var i, j;
-    for (i = 0; i < 6; i++) {
-      for (j = 0; j < 6; j++) {
-        try {
-          possibleMoves.push(createMove(board, i, j, turnIndexBeforeMove, player1Score, player2Score));
-        } catch (e) {
-          // The cell in that position was full.
-        }
-      }
-    }
-    return possibleMoves;
+	var possibleMoves = [];
+	var i, j;
+	for (i = 0; i < 6; i++) {
+	  for (j = 0; j < 6; j++) {
+		try {
+		  possibleMoves.push(createMove(board, i, j, turnIndexBeforeMove, player1Score, player2Score));
+		} catch (e) {
+		  // The cell in that position was full.
+		}
+	  }
+	}
+	return possibleMoves;
   }
   */
   
@@ -111,27 +111,34 @@ angular.module('myApp', []).factory('gameLogic', function() {
   function createMove(board, row, col, turnIndexBeforeMove, player1Score, player2Score) {
   
 	if (board === undefined) {
-      // Initially (at the beginning of the match), the board in state is undefined.
-      board = getInitialBoard();
-    }
+		// Initially (at the beginning of the match), the board in state is undefined.
+		board = getInitialBoard();
+	}
 	
-    if (turnIndexBeforeMove !== row) {
-      throw new Error("One can only sow seeds from his own houses!");
-    }
-    
+	if (turnIndexBeforeMove !== row) {
+		throw new Error("One can only sow seeds from his own houses!");
+	}
+	
 	if (board[row][col] === 0) {
-      throw new Error("One cannot sow seeds from empty house!");
-    }
+		throw new Error("One cannot sow seeds from empty house!");
+	}
 	
 	if (getWinner(player1Score, player2Score) !== -1 || isTie(player1Score, player2Score)== true) {
-      throw new Error("Can only make a move if the game is not over!");
-    }
+		throw new Error("Can only make a move if the game is not over!");
+	}
 	
-    var boardAfterMove = angular.copy(board);   
+	var boardAfterMove = angular.copy(board);   
 	var seeds = boardAfterMove[row][col];
-	if (seeds === 0) {
-      throw new Error("One can only sow seeds if there are any available!");
+
+	/*		[ Redundant check ]
+	 *	 	The condition to check for a move from an empty house
+	 * 		is present on line 122 and will thus never result in the
+	 *		IF path on line 132 to be taken.
+	 */
+/*	if (seeds === 0) {
+    	throw new Error("One can only sow seeds if there are any available!");
     }
+*/
 	var skip = false;
 	// if seeds >= 12, then sowing seeds in that house should be skipped. 
 	if (seeds > 11){
@@ -176,7 +183,13 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	else {
 		do {
 			if(loop > 1){
-				for (j = 5; (j>0) && (seeds>0) ; j--) {
+
+				/*	[ BUG ]
+				 *	The loop is always skipping the 0th col.
+				 * 	The condition within the for loop must be 
+				 * 	(j >= 0) instead of (j > 0).
+				 */
+				for (j = 5; (j>=0) && (seeds>0) ; j--) {
 					if((skip=== true) && (row===0) && (col===j)){
 						continue;
 					}
@@ -205,7 +218,6 @@ angular.module('myApp', []).factory('gameLogic', function() {
 		} while (seeds > 0);
 	}
 	i--; j++;
-	
 	var updatedplayer1Score = player1Score;
 	var updatedplayer2Score = player2Score;
 	var counter = 0;
@@ -236,29 +248,30 @@ angular.module('myApp', []).factory('gameLogic', function() {
 		updatedplayer1Score = player1Score;
 		updatedplayer2Score = player2Score;
 	}
+
 	var winner = getWinner(updatedplayer1Score, updatedplayer2Score);
-    var firstOperation;
-    if (winner !== -1 || isTie(updatedplayer1Score, updatedplayer2Score)) {
-      // Game over.
-      firstOperation = {endMatch: {endMatchScores:
-        (winner === 0 ? [1, 0] : (winner === 1 ? [0, 1] : [0, 0]))}};
+	var firstOperation;
+	if (winner !== -1 || isTie(updatedplayer1Score, updatedplayer2Score)) {
+	  // Game over.
+	  firstOperation = {endMatch: {endMatchScores:
+		(winner === 0 ? [1, 0] : (winner === 1 ? [0, 1] : [0, 0]))}};
 		
-    } else {
-      // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
-      firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
-    }
-    return [firstOperation,
-            {set: {key: 'board', value: boardAfterMove}},
-            {set: {key: 'delta', value: {row: row, col: col}}},
+	} else {
+	  // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
+	  firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
+	}
+	return [firstOperation,
+			{set: {key: 'board', value: boardAfterMove}},
+			{set: {key: 'delta', value: {row: row, col: col}}},
 			{set: {key: 'player1Score', value: updatedplayer1Score}},
 			{set: {key: 'player2Score', value: updatedplayer2Score}}
 			];
   }
   
    return {
-      getInitialBoard: getInitialBoard,
-     // getPossibleMoves: getPossibleMoves,
-      createMove: createMove,
-      isMoveOk: isMoveOk
+	  getInitialBoard: getInitialBoard,
+	 // getPossibleMoves: getPossibleMoves,
+	  createMove: createMove,
+	  isMoveOk: isMoveOk
   };
 });
