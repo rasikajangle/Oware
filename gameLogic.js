@@ -87,7 +87,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
    * Returns all the possible moves for the given board and turnIndexBeforeMove.
    * Returns an empty array if the game is over.
    */
-  /*
+  
   function getPossibleMoves(board, turnIndexBeforeMove,player1Score, player2Score ) {
 	var possibleMoves = [];
 	var i, j;
@@ -102,7 +102,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	}
 	return possibleMoves;
   }
-  */
+  
   
   /**
    * Returns the move that should be performed when player
@@ -130,15 +130,6 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	var boardAfterMove = angular.copy(board);   
 	var seeds = boardAfterMove[row][col];
 
-	/*		[ Redundant check ]
-	 *	 	The condition to check for a move from an empty house
-	 * 		is present on line 122 and will thus never result in the
-	 *		IF path on line 132 to be taken.
-	 */
-/*	if (seeds === 0) {
-    	throw new Error("One can only sow seeds if there are any available!");
-    }
-*/
 	var skip = false;
 	// if seeds >= 12, then sowing seeds in that house should be skipped. 
 	if (seeds > 11){
@@ -183,12 +174,6 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	else {
 		do {
 			if(loop > 1){
-
-				/*	[ BUG ]
-				 *	The loop is always skipping the 0th col.
-				 * 	The condition within the for loop must be 
-				 * 	(j >= 0) instead of (j > 0).
-				 */
 				for (j = 5; (j>=0) && (seeds>0) ; j--) {
 					if((skip=== true) && (row===0) && (col===j)){
 						continue;
@@ -270,7 +255,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
   
    return {
 	  getInitialBoard: getInitialBoard,
-	 // getPossibleMoves: getPossibleMoves,
+	  getPossibleMoves: getPossibleMoves,
 	  createMove: createMove,
 	  isMoveOk: isMoveOk
   };
