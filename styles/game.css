@@ -1,0 +1,74 @@
+body {
+  font-family: 'helvetica neue', Helvetica, Arial, sans-serif;
+}
+
+.board-divider {
+  position: absolute;
+  left:2%; right:2%;
+  top:50%;
+  height: 2px;
+  background-color: #666;
+  z-index: -2;
+}
+
+.pit {
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  width: 92%;
+  height: 30%;
+  position: absolute;
+  top:35%;
+  left: 4%;
+  transition: all 0.2s linear;
+}
+
+.pit:hover {
+  border-color: #666;
+  background-color: #FFF7D6;
+}
+
+.pit.score {
+  background-color: #000;
+  z-index: -1;
+} 
+
+.seeds {
+  font-size: 8vmin;
+  line-height: 15vmin;
+  height: 15vmin;
+  font-weight: bold;
+  color: #000;
+  position: absolute;
+  width: 60%;
+  left: 20%;
+  text-align: center;
+}
+
+.pit.score .seeds {
+  color: #fff;
+}
+
+.score-label {
+  position:absolute;
+  width:100%; 
+  text-align:center;
+  font-weight: bold;
+  font-size: 2.5vmin;
+}
+
+.slowlyAppear {
+  -webkit-animation: slowlyAppear 0.5s linear; /* Chrome, Safari, Opera */
+  animation: slowlyAppear 0.5s linear;
+}
+/* Chrome, Safari, Opera */
+@-webkit-keyframes slowlyAppear {
+  from {opacity: 0.1;}
+  to {opacity: 1;}
+}
+
+/* Standard syntax */
+@keyframes slowlyAppear {
+  from {opacity: 0.1;}
+  to {opacity: 1;}
+}

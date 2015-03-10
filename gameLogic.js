@@ -69,13 +69,15 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			var deltaValue = move[2].set.value;
 			var row = deltaValue.row;
 			var col = deltaValue.col;
-			var board = stateBeforeMove[0].set.value;
-			var previousPlayer1Score = stateBeforeMove[1].set.value;
-			var previousPlayer2Score = stateBeforeMove[2].set.value;
+			var board = stateBeforeMove.board;
+			var previousPlayer1Score = stateBeforeMove.player1Score;
+			var previousPlayer2Score = stateBeforeMove.player2Score;
 			var expectedMove = createMove(board, row, col, turnIndexBeforeMove, previousPlayer1Score, previousPlayer2Score);
 			if (!angular.equals(move, expectedMove)) {
+				console.log(move, expectedMove);
 				return false;
 		  	}
+			console.log("IsMoveOK: p1= "+move[3].set.value + "\t p2= "+ move[4].set.value);
 		} catch (e) {
 	  		// if there are any exceptions then the move is illegal
 	  		return false;
@@ -110,6 +112,9 @@ angular.module('myApp', []).factory('gameLogic', function() {
    */
   function createMove(board, row, col, turnIndexBeforeMove, player1Score, player2Score) {
   
+  	player1Score = player1Score || 0;
+  	player2Score = player2Score || 0;
+  	
 	if (board === undefined) {
 		// Initially (at the beginning of the match), the board in state is undefined.
 		board = getInitialBoard();
@@ -245,6 +250,8 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	  // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
 	  firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
 	}
+
+	console.log("CreateMove: p1= "+updatedplayer1Score + "\t p2= "+ updatedplayer2Score);
 	return [firstOperation,
 			{set: {key: 'board', value: boardAfterMove}},
 			{set: {key: 'delta', value: {row: row, col: col}}},
@@ -252,6 +259,36 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			{set: {key: 'player2Score', value: updatedplayer2Score}}
 			];
   }
+  
+  
+  /**
+     * checkGameEnd
+     * if state 1, check if game end
+     *
+     * @param player1Score
+     * @param player2Score
+     * @returns {{set: {key: string, value: number}}[]}
+     */
+    function checkGameEnd(player1Score, player2Score) {
+        var firstOperation;
+        var winner = getWinner(player1Score, player2Score);
+
+        if (winner !== -1 || isTie(player1Score, player2Score)) {
+            // Game over.
+            firstOperation = {
+                endMatch: {
+                    endMatchScores: (winner === 0 ? [1, 0] : (winner === 1 ? [0, 1] : [0, 0]))
+                }
+            };
+        } else {
+            // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
+            firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
+        }
+
+        return [firstOperation,
+            {set: {key: 'stage', value: 0}}]
+    }
+  
   
    return {
 	  getInitialBoard: getInitialBoard,
