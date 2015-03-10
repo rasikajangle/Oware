@@ -74,10 +74,8 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			var previousPlayer2Score = stateBeforeMove.player2Score;
 			var expectedMove = createMove(board, row, col, turnIndexBeforeMove, previousPlayer1Score, previousPlayer2Score);
 			if (!angular.equals(move, expectedMove)) {
-				console.log(move, expectedMove);
 				return false;
 		  	}
-			console.log("IsMoveOK: p1= "+move[3].set.value + "\t p2= "+ move[4].set.value);
 		} catch (e) {
 	  		// if there are any exceptions then the move is illegal
 	  		return false;
@@ -251,7 +249,6 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	  firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
 	}
 
-	console.log("CreateMove: p1= "+updatedplayer1Score + "\t p2= "+ updatedplayer2Score);
 	return [firstOperation,
 			{set: {key: 'board', value: boardAfterMove}},
 			{set: {key: 'delta', value: {row: row, col: col}}},

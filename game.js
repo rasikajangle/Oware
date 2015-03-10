@@ -19,7 +19,7 @@ angular.module('myApp') .controller('Ctrl',
 		$scope.delta = params.stateAfterMove.delta;
 		$scope.player1Score = params.stateAfterMove.player1Score;
 		$scope.player2Score = params.stateAfterMove.player2Score;
-
+		
 		if ($scope.board === undefined) {
 			$scope.board = gameLogic.getInitialBoard();
 			$scope.player1Score = 0;
@@ -50,14 +50,9 @@ angular.module('myApp') .controller('Ctrl',
 		return;
 	  }
 	  try {
-	  	console.log(row);
 		var move = gameLogic.createMove($scope.board, row, col, $scope.turnIndex, $scope.player1Score, $scope.player2Score);
 		$scope.isYourTurn = false; // to prevent making another move
-		console.log($scope.player1Score);
-		console.log($scope.player2Score);
 		gameService.makeMove(move);
-		console.log($scope.player1Score);
-		console.log($scope.player2Score);
 	  } catch (e) {
 	  	console.log(e);
 		$log.info(["Cell is already full in position:", row, col]);
