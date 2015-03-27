@@ -243,5 +243,5 @@ describe("In Oware", function() {
 			{set: {key: 'player2Score' , value: 25}}
 		]);
 	});
-	
+		
   });
