@@ -1,10 +1,14 @@
 angular.module('myApp') .controller('Ctrl',
-	['$scope', '$log', '$timeout', 'gameService', 'stateService', 'gameLogic', 'resizeGameAreaService',
+	['$scope', '$log', '$timeout', 'gameService', 'stateService', 'gameLogic', 'resizeGameAreaService', 
 	function ($scope, $log, $timeout, gameService, stateService, gameLogic,  resizeGameAreaService) {
 
 	'use strict';
 
 	resizeGameAreaService.setWidthToHeight(1);
+
+	/*$translate('OWARE_GAME').then(function (translation) {
+      console.log("Translation of 'OWARE_GAME' is " + translation);
+    });*/
 
 	/*
 	function sendComputerMove() {
@@ -39,7 +43,8 @@ angular.module('myApp') .controller('Ctrl',
 		//  $timeout(sendComputerMove, 500);
 		}*/
 	}
-   // window.e2e_test_stateService = stateService; // to allow us to load any state in our e2e tests.
+   
+    window.e2e_test_stateService = stateService; // to allow us to load any state in our e2e tests.
 
 	$scope.cellClicked = function (row, col) {
 	  $log.info(["Clicked on cell:", row, col]);

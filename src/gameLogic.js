@@ -1,6 +1,5 @@
-'use strict';
-
 angular.module('myApp', []).factory('gameLogic', function() {
+	'use strict';
 
   /** Returns the initial Oware board, which is a 2x6 matrix containing 4. */
   function getInitialBoard() {
@@ -11,7 +10,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
    function isTie(player1Score, player2Score) {
 		var score1 = player1Score;
 		var score2 = player2Score;
-		if(score1 == 24 && score2 == 24) {
+		if(score1 === 24 && score2 === 24) {
 			return true;
 	}
 	return false;
@@ -21,7 +20,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	var score1 = player1Score;
 	var score2 = player2Score;
 	var winner = isWinner(score1, score2);
-	if (winner == true){ 
+	if (winner === true){ 
 		if(score1 > 24) {
 			return 0;
 		}
@@ -126,7 +125,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 		throw new Error("One cannot sow seeds from empty house!");
 	}
 	
-	if (getWinner(player1Score, player2Score) !== -1 || isTie(player1Score, player2Score)== true) {
+	if (getWinner(player1Score, player2Score) !== -1 || isTie(player1Score, player2Score)=== true) {
 		throw new Error("Can only make a move if the game is not over!");
 	}
 	
@@ -145,8 +144,8 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	if (turnIndexBeforeMove === 1) {
 		do {
 			if(loop > 1){
-				for (i = 0; (i<6) && (seeds>0) ; i++) {
-					if((skip=== true) && (row===1) && (col===i)){
+				for (i = 0; i<6 && seeds>0 ; i++) {
+					if(skip===true && row===1 && col===i){
 					continue;
 					}
 					else {
@@ -158,7 +157,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			}
 	
 			if(loop ===1){
-				for (i = col+1; (i<6) && (seeds>0) ; i++) {
+				for (i = col+1; i<6 && seeds>0 ; i++) {
 					boardAfterMove[1][i]++;
 					seeds--;
 					endTeam = 1;
@@ -177,8 +176,8 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	else {
 		do {
 			if(loop > 1){
-				for (j = 5; (j>=0) && (seeds>0) ; j--) {
-					if((skip=== true) && (row===0) && (col===j)){
+				for (j = 5; j>=0 && seeds>0 ; j--) {
+					if(skip=== true && row===0 && col===j){
 						continue;
 					}
 					else {
@@ -190,14 +189,14 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			}
 	
 			if(loop ===1){
-				for (j=col-1; (j>=0) && (seeds>0) ; j--) {
+				for (j=col-1; j>=0 && seeds>0 ; j--) {
 					boardAfterMove[0][j]++;
 					seeds--;
 					endTeam = 0;
 				}
 			}
 	
-			for (i = 0; (i<6) && (seeds>0) ; i++) {
+			for (i = 0; i<6 && seeds>0 ; i++) {
 				boardAfterMove[1][i]++;
 				seeds--;
 				endTeam = 1;
@@ -214,7 +213,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	if(turnIndexBeforeMove !== endTeam){
 	// Update player score
 		if(turnIndexBeforeMove === 1){
-			while ((boardAfterMove[0][j] === 2 || boardAfterMove[0][j]===3) && (j<6) ){
+			while ((boardAfterMove[0][j] === 2 || boardAfterMove[0][j]===3) && j<6 ){
 				updatedplayer2Score = updatedplayer2Score + boardAfterMove[0][j];
 				boardAfterMove[0][j]=0;
 				counter++;
@@ -222,7 +221,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			}
 		}
 		else {
-			while ((boardAfterMove[1][i] === 2 || boardAfterMove[1][i]===3) && (i>=0) ){
+			while ((boardAfterMove[1][i] === 2 || boardAfterMove[1][i]===3) && i>=0 ){
 				updatedplayer1Score = updatedplayer1Score + boardAfterMove[1][i];
 				boardAfterMove[1][i]=0;
 				counter++;
@@ -231,7 +230,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 		}
 	}
 	
-	if(counter == 6){
+	if(counter === 6){
 		boardAfterMove = angular.copy(boardAfterMoveCopy);
 		updatedplayer1Score = player1Score;
 		updatedplayer2Score = player2Score;
@@ -242,7 +241,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	if (winner !== -1 || isTie(updatedplayer1Score, updatedplayer2Score)) {
 	  // Game over.
 	  firstOperation = {endMatch: {endMatchScores:
-		(winner === 0 ? [1, 0] : (winner === 1 ? [0, 1] : [0, 0]))}};
+		winner === 0 ? [1, 0] : winner === 1 ? [0, 1] : [0, 0]}};
 		
 	} else {
 	  // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
@@ -256,36 +255,6 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			{set: {key: 'player2Score', value: updatedplayer2Score}}
 			];
   }
-  
-  
-  /**
-     * checkGameEnd
-     * if state 1, check if game end
-     *
-     * @param player1Score
-     * @param player2Score
-     * @returns {{set: {key: string, value: number}}[]}
-     */
-    function checkGameEnd(player1Score, player2Score) {
-        var firstOperation;
-        var winner = getWinner(player1Score, player2Score);
-
-        if (winner !== -1 || isTie(player1Score, player2Score)) {
-            // Game over.
-            firstOperation = {
-                endMatch: {
-                    endMatchScores: (winner === 0 ? [1, 0] : (winner === 1 ? [0, 1] : [0, 0]))
-                }
-            };
-        } else {
-            // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
-            firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
-        }
-
-        return [firstOperation,
-            {set: {key: 'stage', value: 0}}]
-    }
-  
   
    return {
 	  getInitialBoard: getInitialBoard,
