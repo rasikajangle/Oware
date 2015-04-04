@@ -1,81 +1,104 @@
 angular.module('myApp', []).factory('gameLogic', function() {
 	'use strict';
 
-  /** Returns the initial Oware board, which is a 2x6 matrix containing 4. */
-  function getInitialBoard() {
-	return [[4, 4, 4, 4, 4, 4],
+  	/** Returns the initial Oware board, which is a 2x6 matrix containing 4. */
+  	function getInitialBoard() {
+		return [[4, 4, 4, 4, 4, 4],
 			[4, 4, 4, 4, 4, 4]];
-  }
+  	}
   
-   function isTie(player1Score, player2Score) {
-		var score1 = player1Score;
-		var score2 = player2Score;
-		if(score1 === 24 && score2 === 24) {
+  	function canSowOpponent(board, row, col) {
+  		return board[row][col] > (row === 0 ? col : 5 - col);
+  	}
+ 
+ 	function hasHousesThatCanSowOpponent(board, turnIndex) {
+		for(var i = 0; i < 6; i++) {
+			if(canSowOpponent(board, turnIndex, i)) {
+				return true;
+			}
+		}
+ 		return false;
+ 	}
+
+  	function getSeedsInRow(board, rowIndex) {
+  		var seeds = 0;
+  		for(var i = 0; i < 6; i++) {
+  			seeds += board[rowIndex][i];
+  		}
+  		return seeds;
+  	}
+
+  	function getWinner(board, scores) {
+  		if(getSeedsInRow(board, 1) === 0 && !hasHousesThatCanSowOpponent(board, 0)) {
+  			scores[0] += getSeedsInRow(board, 0);
+  			return 0;
+  		}
+  		else if(getSeedsInRow(board, 0) === 0 && !hasHousesThatCanSowOpponent(board, 1)) {
+  			scores[1] += getSeedsInRow(board, 1);
+  			return 1;
+  		}
+  		else if(scores[0] > 24) {
+  			return 0;
+  		}
+  		else if(scores[1] > 24){
+  			return 1;
+  		}
+  		return -1;
+  	}
+
+   	function isTie(scores) {
+		if(scores[0] === 24 && scores[1] === 24) {
 			return true;
-	}
-	return false;
-  }
-  
-   function getWinner(player1Score, player2Score) {
-	var score1 = player1Score;
-	var score2 = player2Score;
-	var winner = isWinner(score1, score2);
-	if (winner === true){ 
-		if(score1 > 24) {
-			return 0;
 		}
-		else if (score2 > 24){
-			return 1;
-		}
-	}
-	return -1;
-  }
-	
-	function isWinner(player1Score, player2Score) {
-	var score1 = player1Score;
-	var score2 = player2Score;
-	if(score1 > 24 || score2 > 24) {
-		return true;
-	}
-	return false;
-  }
+		return false;
+  	}
 	
 	function isMoveOk(params) {
 		var move = params.move;
 		var turnIndexBeforeMove = params.turnIndexBeforeMove;
 		var stateBeforeMove = params.stateBeforeMove;
 	
-		// Example stateBeforeMove:
-		  // [{set: {key: 'board', value: [[4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4]]}},
-		  //  {set: {key: 'player1Score' , value: 0}},
-		  //  {set: {key: 'player2Score' , value: 0}}
-		  // ]
+		/*		
+		Example stateBeforeMove:
+		{
+		  	board : [[4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4]],
+		   	scores : [0, 0]
+		}
 		
-		// The state and turn after move are not needed in Oware (or in any game where all state is public).
-		//var turnIndexAfterMove = params.turnIndexAfterMove;
-		//var stateAfterMove = params.stateAfterMove;
+		The state and turn after move are not needed in Oware (or in any game where all state is public).
+		var turnIndexAfterMove = params.turnIndexAfterMove;
+		var stateAfterMove = params.stateAfterMove;
 
-		// We can assume that turnIndexBeforeMove and stateBeforeMove are legal, and we need
-		// to verify that move is legal.
+		We can assume that turnIndexBeforeMove and stateBeforeMove are legal, and we need
+		to verify that move is legal.
+		*/
 		try {
-			// Example move:
-			// [{setTurn: {turnIndex : 1},
-			//  {set: {key: 'board', value: [[4, 4, 5, 5, 5, 5], [4, 4, 4, 4, 4, 0]]}},
-			//  {set: {key: 'delta', value: {row: 1, col: 6}}},
-			//  {set: {key: 'player1Score' , value: 0}},
-			//  {set: {key: 'player2Score' , value: 0}}
-			// ]
+			/*			
+			Example move:
+			[{setTurn: {turnIndex : 1},
+			 {set: {key: 'board', value: [[4, 4, 5, 5, 5, 5], [4, 4, 4, 4, 4, 0]]}},
+			 {set: {key: 'delta', value: {row: 1, col: 6}}},
+			 {set: {key: 'scores' , value: [0, 0]}}
+			]
+			*/
 			var deltaValue = move[2].set.value;
 			var row = deltaValue.row;
 			var col = deltaValue.col;
 			var board = stateBeforeMove.board;
-			var previousPlayer1Score = stateBeforeMove.player1Score;
-			var previousPlayer2Score = stateBeforeMove.player2Score;
-			var expectedMove = createMove(board, row, col, turnIndexBeforeMove, previousPlayer1Score, previousPlayer2Score);
+			var scores = stateBeforeMove.scores;
+			var expectedMove = createMove(board, row, col, turnIndexBeforeMove, scores);
 			if (!angular.equals(move, expectedMove)) {
+				function replacer(key, value) {
+				  	if (key === "set") {
+				    	return value.key + ' : ' + JSON.stringify(value.value)
+				  	}
+				  	return value
+				}
+				console.log(JSON.stringify(expectedMove, replacer, 2));
 				return false;
 		  	}
 		} catch (e) {
+			console.log(e.message);
 	  		// if there are any exceptions then the move is illegal
 	  		return false;
 		}
@@ -83,21 +106,21 @@ angular.module('myApp', []).factory('gameLogic', function() {
   }
 
   /**
-   * Returns all the possible moves for the given board and turnIndexBeforeMove.
+   * Returns all the possible moves for the given board and turnIndex.
    * Returns an empty array if the game is over.
    */
   
-  function getPossibleMoves(board, turnIndexBeforeMove,player1Score, player2Score ) {
+  function getPossibleMoves(board, turnIndex, scores) {
 	var possibleMoves = [];
 	var i, j;
 	for (i = 0; i < 6; i++) {
-	  for (j = 0; j < 6; j++) {
-		try {
-		  possibleMoves.push(createMove(board, i, j, turnIndexBeforeMove, player1Score, player2Score));
-		} catch (e) {
-		  // The cell in that position was full.
-		}
-	  }
+	  	for (j = 0; j < 6; j++) {
+			try {
+		  		possibleMoves.push(createMove(board, i, j, turnIndex, scores));
+			} catch (e) {
+		  		// The cell in that position was full.
+			}
+	  	}
 	}
 	return possibleMoves;
   }
@@ -107,14 +130,12 @@ angular.module('myApp', []).factory('gameLogic', function() {
    * Returns the move that should be performed when player
    * with index turnIndexBeforeMove makes a move in cell row X col.
    */
-  function createMove(board, row, col, turnIndexBeforeMove, player1Score, player2Score) {
-  
-  	player1Score = player1Score || 0;
-  	player2Score = player2Score || 0;
-  	
+  function createMove(board, row, col, turnIndexBeforeMove, scores) {
+   	
 	if (board === undefined) {
 		// Initially (at the beginning of the match), the board in state is undefined.
 		board = getInitialBoard();
+		scores = [0, 0];
 	}
 	
 	if (turnIndexBeforeMove !== row) {
@@ -125,134 +146,76 @@ angular.module('myApp', []).factory('gameLogic', function() {
 		throw new Error("One cannot sow seeds from empty house!");
 	}
 	
-	if (getWinner(player1Score, player2Score) !== -1 || isTie(player1Score, player2Score)=== true) {
+	if (getWinner(board, scores) !== -1 || isTie(scores)) {
 		throw new Error("Can only make a move if the game is not over!");
 	}
-	
+
+	if (!canSowOpponent(board, row, col) && getSeedsInRow(board, 1 - row) === 0) {
+		throw new Error("Cannot prevent the opponent from continuing the game!");
+	}
+
 	var boardAfterMove = angular.copy(board);   
 	var seeds = boardAfterMove[row][col];
 
-	var skip = false;
-	// if seeds >= 12, then sowing seeds in that house should be skipped. 
-	if (seeds > 11){
-		skip = true;
-	}
-	boardAfterMove[row][col] = 0;
-	var i, j;
-	var endTeam, loop;
-	loop = 1;
-	if (turnIndexBeforeMove === 1) {
-		do {
-			if(loop > 1){
-				for (i = 0; i<6 && seeds>0 ; i++) {
-					if(skip===true && row===1 && col===i){
-					continue;
-					}
-					else {
-						boardAfterMove[1][i]++;
-						seeds--;
-						endTeam = 1;
-					}	
-				}
-			}
-	
-			if(loop ===1){
-				for (i = col+1; i<6 && seeds>0 ; i++) {
-					boardAfterMove[1][i]++;
-					seeds--;
-					endTeam = 1;
-				}
-			}
+	var r = row, c = col, cd = r === 0 ? -1 : 1;
 
-			for (j=5; j>=0 && seeds >0; j--) {
-				boardAfterMove[0][j]++;
-				seeds--;
-				endTeam = 0;
-			}
-		loop++;
-		} while (seeds > 0);
-	}
-	
-	else {
-		do {
-			if(loop > 1){
-				for (j = 5; j>=0 && seeds>0 ; j--) {
-					if(skip=== true && row===0 && col===j){
-						continue;
-					}
-					else {
-						boardAfterMove[0][j]++;
-						seeds--;
-						endTeam = 1;
-					}
-				}
-			}
-	
-			if(loop ===1){
-				for (j=col-1; j>=0 && seeds>0 ; j--) {
-					boardAfterMove[0][j]++;
-					seeds--;
-					endTeam = 0;
-				}
-			}
-	
-			for (i = 0; i<6 && seeds>0 ; i++) {
-				boardAfterMove[1][i]++;
-				seeds--;
-				endTeam = 1;
-			}
-			loop++;
-		} while (seeds > 0);
-	}
-	i--; j++;
-	var updatedplayer1Score = player1Score;
-	var updatedplayer2Score = player2Score;
-	var counter = 0;
-	var boardAfterMoveCopy = angular.copy(boardAfterMove);
-	//Update Player Scores
-	if(turnIndexBeforeMove !== endTeam){
-	// Update player score
-		if(turnIndexBeforeMove === 1){
-			while ((boardAfterMove[0][j] === 2 || boardAfterMove[0][j]===3) && j<6 ){
-				updatedplayer2Score = updatedplayer2Score + boardAfterMove[0][j];
-				boardAfterMove[0][j]=0;
-				counter++;
-				j++;
-			}
+	boardAfterMove[r][c] = 0;
+	while(seeds > 0) {
+		c = c + cd;
+		if( c === -1 ) {
+			r = 1;
+			c = 0;
+			cd *= -1;
 		}
-		else {
-			while ((boardAfterMove[1][i] === 2 || boardAfterMove[1][i]===3) && i>=0 ){
-				updatedplayer1Score = updatedplayer1Score + boardAfterMove[1][i];
-				boardAfterMove[1][i]=0;
-				counter++;
-				i--;
-			}
+		else if( c === 6 ) {
+			r = 0;
+			c = 5;
+			cd *= -1;
 		}
-	}
-	
-	if(counter === 6){
-		boardAfterMove = angular.copy(boardAfterMoveCopy);
-		updatedplayer1Score = player1Score;
-		updatedplayer2Score = player2Score;
+
+		if(r === row && c === col) {
+			continue;
+		}
+		boardAfterMove[r][c]++;
+		seeds--;
 	}
 
-	var winner = getWinner(updatedplayer1Score, updatedplayer2Score);
+	cd *= -1;
+	var capCount = 0;
+	var boardAfterMoveCopy = angular.copy(boardAfterMove), scoreCopy = scores[turnIndexBeforeMove];
+	if( r === 1 - turnIndexBeforeMove ) {
+		while( c >= 0 && c <= 5) {
+			if(boardAfterMove[r][c] === 2 || boardAfterMove[r][c] === 3) {
+				scores[turnIndexBeforeMove] += boardAfterMove[r][c];
+				boardAfterMove[r][c] = 0;
+				capCount++;
+			}
+			c = c + cd;
+		}		
+	}
+
+	if(capCount === 6) {
+		boardAfterMove = boardAfterMoveCopy;
+		scores[turnIndexBeforeMove] = scoreCopy;
+	}
+
+
+	var winner = getWinner(boardAfterMove, scores);
 	var firstOperation;
-	if (winner !== -1 || isTie(updatedplayer1Score, updatedplayer2Score)) {
-	  // Game over.
-	  firstOperation = {endMatch: {endMatchScores:
-		winner === 0 ? [1, 0] : winner === 1 ? [0, 1] : [0, 0]}};
+	if (winner !== -1 || isTie(scores)) {
+	  	// Game over.
+		firstOperation = {endMatch: {endMatchScores:
+			winner === 0 ? [1, 0] : winner === 1 ? [0, 1] : [0, 0]}};
 		
 	} else {
-	  // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
-	  firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
+	  	// Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
+		firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
 	}
 
 	return [firstOperation,
 			{set: {key: 'board', value: boardAfterMove}},
 			{set: {key: 'delta', value: {row: row, col: col}}},
-			{set: {key: 'player1Score', value: updatedplayer1Score}},
-			{set: {key: 'player2Score', value: updatedplayer2Score}}
+			{set: {key: 'scores', value: scores}}
 			];
   }
   

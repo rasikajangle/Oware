@@ -1,6 +1,8 @@
 // Karma configuration
 // Generated on Tue Feb 24 2015 10:02:59 GMT-0500 (Eastern Standard Time)
 module.exports = function(config){
+
+  
   'use strict';
   config.set({
 
@@ -9,14 +11,14 @@ module.exports = function(config){
     files : [
       'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js',
       'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-mocks.js',
-      '*.js',
-      '*Test.js'
+      'src/gameLogic.js',
+      'src/gameLogicTest.js'
     ],
 
     reporters: ['progress', 'coverage'],
 
     preprocessors: {
-      'gameLogic.js': ['coverage']
+      'src/gameLogic.js': ['coverage']
     },
 
     // optionally, configure the reporter
