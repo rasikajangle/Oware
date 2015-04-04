@@ -243,5 +243,20 @@ describe("In Oware", function() {
 			{set: {key: 'player2Score' , value: 25}}
 		]);
 	});
+
+
+	it("placing seeds from 1x3 house in consecutive positions for player 1 to win the game is legal", function() {
+	expectMoveOk(1, 
+		[{set: {key: 'board',  value: [[0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 1]]}},
+			{set: {key: 'player1Score' , value: 24}},
+			{set: {key: 'player2Score' , value: 24}}
+		],
+		[{endMatch: {endMatchScores : [0, 1]}},
+			{set: {key: 'board', value: [[6, 0, 1, 0, 1, 1], [0, 0, 0, 0, 4, 2]]}},
+			{set: {key: 'delta', value: {row: 1, col: 3}}},
+			{set: {key: 'player1Score' , value: 8}},
+			{set: {key: 'player2Score' , value: 25}}
+		]);
+	});
 		
   });
