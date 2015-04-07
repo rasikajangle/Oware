@@ -23,7 +23,7 @@ module.exports = function(grunt) {
         nonbsp: true,
         nonew: true,
         notypeof: true,
-        singleGroups: true,
+        singleGroups: false,
         jasmine: true,
         jquery: true,
         globals: {
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
     processhtml: {
       dist: {
         files: {
-          'index.min.html': ['index.html']
+          'game.min.html': ['game.html']
         }
       }
     },

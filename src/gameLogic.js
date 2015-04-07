@@ -8,7 +8,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
   	}
   
   	function canSowOpponent(board, row, col) {
-  		return board[row][col] > (row === 0 ? col : 5 - col);
+  		return (board[row][col]) > (row === 0 ? col : 5 - col);
   	}
  
  	function hasHousesThatCanSowOpponent(board, turnIndex) {
@@ -88,141 +88,138 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			var scores = stateBeforeMove.scores;
 			var expectedMove = createMove(board, row, col, turnIndexBeforeMove, scores);
 			if (!angular.equals(move, expectedMove)) {
-				function replacer(key, value) {
-				  	if (key === "set") {
-				    	return value.key + ' : ' + JSON.stringify(value.value)
-				  	}
-				  	return value
-				}
-				console.log(JSON.stringify(expectedMove, replacer, 2));
+				console.log(JSON.stringify(move, null, 2), JSON.stringify(expectedMove, null, 2));
 				return false;
 		  	}
 		} catch (e) {
-			console.log(e.message);
 	  		// if there are any exceptions then the move is illegal
 	  		return false;
 		}
 		return true;
   }
 
-  /**
-   * Returns all the possible moves for the given board and turnIndex.
-   * Returns an empty array if the game is over.
-   */
+    /**
+    * Returns all the possible moves for the given board and turnIndex.
+    * Returns an empty array if the game is over.
+    */
+    function getPossibleMoves(board, turnIndex, scores) {
+        var possibleMoves = [];
+        var i, j;
+        for (i = 0; i < 6; i++) {
+          	for (j = 0; j < 6; j++) {
+        		try {
+        	  		possibleMoves.push(createMove(board, i, j, turnIndex, scores));
+        		} catch (e) {
+        	  		// The cell in that position was full.
+        		}
+          	}
+        }
+        return possibleMoves;
+    }
   
-  function getPossibleMoves(board, turnIndex, scores) {
-	var possibleMoves = [];
-	var i, j;
-	for (i = 0; i < 6; i++) {
-	  	for (j = 0; j < 6; j++) {
-			try {
-		  		possibleMoves.push(createMove(board, i, j, turnIndex, scores));
-			} catch (e) {
-		  		// The cell in that position was full.
-			}
-	  	}
-	}
-	return possibleMoves;
-  }
   
-  
-  /**
-   * Returns the move that should be performed when player
-   * with index turnIndexBeforeMove makes a move in cell row X col.
-   */
-  function createMove(board, row, col, turnIndexBeforeMove, scores) {
-   	
-	if (board === undefined) {
-		// Initially (at the beginning of the match), the board in state is undefined.
-		board = getInitialBoard();
-		scores = [0, 0];
-	}
-	
-	if (turnIndexBeforeMove !== row) {
-		throw new Error("One can only sow seeds from his own houses!");
-	}
-	
-	if (board[row][col] === 0) {
-		throw new Error("One cannot sow seeds from empty house!");
-	}
-	
-	if (getWinner(board, scores) !== -1 || isTie(scores)) {
-		throw new Error("Can only make a move if the game is not over!");
-	}
+    /**
+    * Returns the move that should be performed when player
+    * with index turnIndexBeforeMove makes a move in cell row X col.
+    */
+    function createMove(board, row, col, turnIndexBeforeMove, scores) {
+    	
+        if (board === undefined) {
+        	// Initially (at the beginning of the match), the board in state is undefined.
+        	board = getInitialBoard();
+        	scores = [0, 0];
+        }
 
-	if (!canSowOpponent(board, row, col) && getSeedsInRow(board, 1 - row) === 0) {
-		throw new Error("Cannot prevent the opponent from continuing the game!");
-	}
+        if (turnIndexBeforeMove !== row) {
+        	throw new Error("One can only sow seeds from his own houses!");
+        }
 
-	var boardAfterMove = angular.copy(board);   
-	var seeds = boardAfterMove[row][col];
+        if (board[row][col] === 0) {
+        	throw new Error("One cannot sow seeds from empty house!");
+        }
 
-	var r = row, c = col, cd = r === 0 ? -1 : 1;
+        if (getWinner(board, scores) !== -1 || isTie(scores)) {
+        	throw new Error("Can only make a move if the game is not over!");
+        }
 
-	boardAfterMove[r][c] = 0;
-	while(seeds > 0) {
-		c = c + cd;
-		if( c === -1 ) {
-			r = 1;
-			c = 0;
-			cd *= -1;
-		}
-		else if( c === 6 ) {
-			r = 0;
-			c = 5;
-			cd *= -1;
-		}
+        if (!canSowOpponent(board, row, col) && getSeedsInRow(board, 1 - row) === 0) {
+        	throw new Error("Cannot prevent the opponent from continuing the game!");
+        }
 
-		if(r === row && c === col) {
-			continue;
-		}
-		boardAfterMove[r][c]++;
-		seeds--;
-	}
+        var boardAfterMove = angular.copy(board),
+        	scoresAfterMove = angular.copy(scores);
+        var seeds = boardAfterMove[row][col];
 
-	cd *= -1;
-	var capCount = 0;
-	var boardAfterMoveCopy = angular.copy(boardAfterMove), scoreCopy = scores[turnIndexBeforeMove];
-	if( r === 1 - turnIndexBeforeMove ) {
-		while( c >= 0 && c <= 5) {
-			if(boardAfterMove[r][c] === 2 || boardAfterMove[r][c] === 3) {
-				scores[turnIndexBeforeMove] += boardAfterMove[r][c];
-				boardAfterMove[r][c] = 0;
-				capCount++;
-			}
-			c = c + cd;
-		}		
-	}
+        var r = row, c = col, cd = r === 0 ? -1 : 1;
 
-	if(capCount === 6) {
-		boardAfterMove = boardAfterMoveCopy;
-		scores[turnIndexBeforeMove] = scoreCopy;
-	}
+        boardAfterMove[r][c] = 0;
+        while(seeds > 0) {
+        	c = c + cd;
+        	if( c === -1 ) {
+        		r = 1;
+        		c = 0;
+        		cd *= -1;
+        	}
+        	else if( c === 6 ) {
+        		r = 0;
+        		c = 5;
+        		cd *= -1;
+        	}
+
+        	if(r === row && c === col) {
+        		continue;
+        	}
+        	boardAfterMove[r][c]++;
+        	seeds--;
+        }
+
+        cd *= -1;
+        var capCount = 0;
+        var boardAfterMoveCopy = angular.copy(boardAfterMove), scoreCopy = scoresAfterMove[turnIndexBeforeMove];
+        if( r === 1 - turnIndexBeforeMove ) {
+        	while( c >= 0 && c <= 5) {
+        		if(boardAfterMove[r][c] === 2 || boardAfterMove[r][c] === 3) {
+        			scoresAfterMove[turnIndexBeforeMove] += boardAfterMove[r][c];
+        			boardAfterMove[r][c] = 0;
+        			capCount++;
+        		}
+        		else {
+        			break;
+        		}
+        		c = c + cd;
+        	}		
+        }
+
+        if(capCount === 6) {
+        	boardAfterMove = boardAfterMoveCopy;
+        	scoresAfterMove[turnIndexBeforeMove] = scoreCopy;
+        }
 
 
-	var winner = getWinner(boardAfterMove, scores);
-	var firstOperation;
-	if (winner !== -1 || isTie(scores)) {
-	  	// Game over.
-		firstOperation = {endMatch: {endMatchScores:
-			winner === 0 ? [1, 0] : winner === 1 ? [0, 1] : [0, 0]}};
-		
-	} else {
-	  	// Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
-		firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
-	}
+        var winner = getWinner(boardAfterMove, scoresAfterMove);
+        var firstOperation;
+        if (winner !== -1 || isTie(scoresAfterMove)) {
+          	// Game over.
+        	firstOperation = {endMatch: {endMatchScores:
+        		winner === 0 ? [1, 0] : winner === 1 ? [0, 1] : [0, 0]}};
+        	
+        } else {
+          	// Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
+        	firstOperation = {setTurn: {turnIndex: 1 - turnIndexBeforeMove}};
+        }
 
-	return [firstOperation,
-			{set: {key: 'board', value: boardAfterMove}},
-			{set: {key: 'delta', value: {row: row, col: col}}},
-			{set: {key: 'scores', value: scores}}
-			];
-  }
-  
-   return {
-	  getInitialBoard: getInitialBoard,
-	  getPossibleMoves: getPossibleMoves,
-	  createMove: createMove,
-	  isMoveOk: isMoveOk
-  };
+        return [firstOperation,
+        		{set: {key: 'board', value: boardAfterMove}},
+        		{set: {key: 'delta', value: {row: row, col: col}}},
+        		{set: {key: 'scores', value: scoresAfterMove}}
+        		];
+    }
+
+    return {
+      getInitialBoard: getInitialBoard,
+      getPossibleMoves: getPossibleMoves,
+      createMove: createMove,
+      isMoveOk: isMoveOk
+    };
+
 });

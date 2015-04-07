@@ -21,13 +21,11 @@ angular.module('myApp') .controller('Ctrl',
 	function updateUI(params) {
 		$scope.board = params.stateAfterMove.board;
 		$scope.delta = params.stateAfterMove.delta;
-		$scope.player1Score = params.stateAfterMove.player1Score;
-		$scope.player2Score = params.stateAfterMove.player2Score;
+		$scope.scores = params.stateAfterMove.scores;
 		
 		if ($scope.board === undefined) {
 			$scope.board = gameLogic.getInitialBoard();
-			$scope.player1Score = 0;
-			$scope.player2Score = 0;
+			$scope.scores = [0, 0];
 		}
 
 		$scope.isYourTurn = params.turnIndexAfterMove >= 0 && // game is ongoing
@@ -47,27 +45,27 @@ angular.module('myApp') .controller('Ctrl',
     window.e2e_test_stateService = stateService; // to allow us to load any state in our e2e tests.
 
 	$scope.cellClicked = function (row, col) {
-	  $log.info(["Clicked on cell:", row, col]);
-	  if (window.location.search === '?throwException') { // to test encoding a stack trace with sourcemap
-		throw new Error("Throwing the error because URL has '?throwException'");
-	  }
-	  if (!$scope.isYourTurn) {
-		return;
-	  }
-	  try {
-		var move = gameLogic.createMove($scope.board, row, col, $scope.turnIndex, $scope.player1Score, $scope.player2Score);
-		$scope.isYourTurn = false; // to prevent making another move
-		gameService.makeMove(move);
-	  } catch (e) {
-	  	console.log(e);
-		$log.info(["Cell is already full in position:", row, col]);
-		return;
-	  }
+		$log.info(["Clicked on cell:", row, col]);
+			if (window.location.search === '?throwException') { // to test encoding a stack trace with sourcemap
+				throw new Error("Throwing the error because URL has '?throwException'");
+			}
+			if (!$scope.isYourTurn) {
+				return;
+			}
+			try {
+				var move = gameLogic.createMove($scope.board, row, col, $scope.turnIndex, $scope.scores);
+				$scope.isYourTurn = false; // to prevent making another move
+				gameService.makeMove(move);
+			} catch (e) {
+				console.log(e);
+			$log.info(["Cell is already full in position:", row, col]);
+			return;
+		}
 	};
 
 	$scope.shouldShowImage = function (row, col) {
-	  var cell = $scope.board[row][col];
-	  return cell !== "";
+	  	var cell = $scope.board[row][col];
+	  	return cell !== "";
 	};
 
 	$scope.getSeeds = function (row, col) {

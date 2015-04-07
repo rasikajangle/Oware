@@ -3,7 +3,7 @@ describe('Oware', function() {
     'use strict';
 
     beforeEach(function() {
-        browser.get('http://localhost:9000/index.min.html');
+        browser.get('http://localhost:9000/game.min.html');
     });
 
     function getDiv(row, col) {
@@ -16,11 +16,11 @@ describe('Oware', function() {
 
 
     function getPlayer1Score() {
-    return element(by.id('e2e_test_player1score'));
+        return element(by.id('e2e_test_player1score'));
     }
 
     function getPlayer2Score() {
-    return element(by.id('e2e_test_player2score'));
+        return element(by.id('e2e_test_player2score'));
     }
 
   
@@ -99,43 +99,34 @@ describe('Oware', function() {
             [5, 5, 5, 5, 4, 0]]);
     });
 
-    var player1Score1 = 17;
-    var player2Score1 = 13;
+    var scores1 = [17, 13];
     var board1 = [
         [3, 1, 1, 1, 1, 6],
         [0, 1, 1, 1, 1, 5]];
 
     var delta2 = {row: 0, col: 5};
-    var player1Score2 = 17;
-    var player2Score2 = 13;
+    var scores2 = [17, 13];
     var board2 = [
         [4, 2, 2, 2, 2, 0],
         [1, 1, 1, 1, 1, 5]];
 
     var delta3 = {row: 1, col: 5};
-    var player1Score3 = 17;
-    var player2Score3 = 25;
+    var scores3 = [17, 25];
     var board3 = [
         [4, 0, 0, 0, 0, 1],
         [1, 1, 1, 1, 1, 0]];
 
-
-    var player1Score4 = 21;
-    var player2Score4 = 15;
+    var scores4 = [21, 15];
     var board4 = [
         [0, 0, 0, 0, 0, 11],
         [0, 0, 0, 0, 0, 1]];
 
-
     var delta5 = {row: 1, col: 5};    
-    var player1Score5 = 21;
-    var player2Score5 = 15;
+    var scores5 = [21, 15];
     var board5 = [
         [0, 0, 0, 0, 0, 12],
         [0, 0, 0, 0, 0, 0]];
 
-    //var player1Score6 = 21;
-    //var player2Score6 = 15;
     var board6 = [
         [1, 1, 1, 1, 2, 0],
         [1, 1, 1, 1, 1, 1]];
@@ -149,10 +140,9 @@ describe('Oware', function() {
         lastMove: [{setTurn: {turnIndex: 1}},
               {set: {key: 'board', value: board2}},
               {set: {key: 'delta', value: delta2}},
-              {set: {key: 'player1Score', value: player1Score2}},
-              {set: {key: 'player2Score', value: player2Score2}}],
-        lastState: {board: board1, player1Score: player1Score1, player2Score: player2Score1},
-        currentState: {board: board2, player1Score: player1Score2, player2Score: player2Score2},
+              {set: {key: 'scores', value: scores2}}],
+        lastState: {board: board1, scores: scores1},
+        currentState: {board: board2, scores: scores2},
         lastVisibleTo: {},
         currentVisibleTo: {},
     };
@@ -165,10 +155,9 @@ describe('Oware', function() {
         lastMove: [{endMatch: {endMatchScores: [0, 1]}},
              {set: {key: 'board', value: board3}},
              {set: {key: 'delta', value: delta3}},
-             {set: {key: 'player1Score', value: player1Score3}},
-             {set: {key: 'player2Score', value: player2Score3}}],
-        lastState: {board: board2, player1Score: player1Score2, player2Score: player2Score2},
-        currentState: {board: board3, player1Score: player1Score3, player2Score: player2Score3},
+             {set: {key: 'scores', value: scores3}}],
+        lastState: {board: board2, scores: scores2},
+        currentState: {board: board3, scores: scores3},
         lastVisibleTo: {},
         currentVisibleTo: {},
     };
@@ -181,10 +170,9 @@ describe('Oware', function() {
         lastMove: [{setTurn: {turnIndex: 0}},
               {set: {key: 'board', value: board5}},
               {set: {key: 'delta', value: delta5}},
-              {set: {key: 'player1Score', value: player1Score5}},
-              {set: {key: 'player2Score', value: player2Score5}}],
-        lastState: {board: board4, player1Score: player1Score4, player2Score: player2Score4},
-        currentState: {board: board5, player1Score: player1Score5, player2Score: player2Score5},
+              {set: {key: 'scores', value: scores5}}],
+        lastState: {board: board4, scores: scores4},
+        currentState: {board: board5, scores: scores5},
         lastVisibleTo: {},
         currentVisibleTo: {},
     };
@@ -215,7 +203,7 @@ describe('Oware', function() {
         clickDivAndExpectSeeds(1, 5, 0); // can't click after game ended
     });
 
-    it('can start from a match that is about to end, and win and check the player1Score', function () {
+    it('can start from a match that is about to end, and win and check the score of player 1', function () {
         setMatchState(matchState2, 'passAndPlay');
         expectBoard(board2);
         clickDivAndExpectSeeds(1, 5, 0); // winning click!
@@ -223,7 +211,7 @@ describe('Oware', function() {
         expectPlayer1Score(17);
     });
 
-    it('can start from a match that is about to end, and win and check the player2Score', function () {
+    it('can start from a match that is about to end, and win and check the score of player 2', function () {
         setMatchState(matchState2, 'passAndPlay');
         expectBoard(board2);
         clickDivAndExpectSeeds(1, 5, 0); // winning click!

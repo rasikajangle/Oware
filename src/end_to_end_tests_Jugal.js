@@ -8,7 +8,7 @@ describe('Oware', function() {
     'use strict';
 
     beforeEach(function() {
-        browser.get('http://localhost:9000/index.min.html');
+        browser.get('http://localhost:9000/game.min.html');
     });
 
     function getDiv(row, col) {
