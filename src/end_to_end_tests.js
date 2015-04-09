@@ -85,6 +85,7 @@ describe('Oware', function() {
 
     it('should show 0 if I click in 0x0', function () {
         clickDivAndExpectSeeds(0, 0, 0);
+        browser.sleep(3000);
         expectBoard([
             [0,4,4,4,4,4],
             [5,5,5,5,4,4]]);
@@ -92,8 +93,10 @@ describe('Oware', function() {
 
     it('should ignore clicking on a empty cell', function () {
         clickDivAndExpectSeeds(0, 0, 0);
+        browser.sleep(3500);
         clickDivAndExpectSeeds(0, 0, 0); // clicking on a empty cell doesn't do anything.
         clickDivAndExpectSeeds(1, 5, 0);
+        browser.sleep(3500);
         expectBoard([
             [0, 4, 5, 5, 5, 5],
             [5, 5, 5, 5, 4, 0]]);
@@ -183,6 +186,7 @@ describe('Oware', function() {
         expectBoard(board2);
         
         clickDivAndExpectSeeds(1, 5, 0); // winning click!
+        browser.sleep(5000);
         clickDivAndExpectSeeds(1, 5, 0); // can't click after game ended
         expectBoard(board3);
     });
@@ -207,6 +211,7 @@ describe('Oware', function() {
         setMatchState(matchState2, 'passAndPlay');
         expectBoard(board2);
         clickDivAndExpectSeeds(1, 5, 0); // winning click!
+        browser.sleep(5000);
         expectBoard(board3);
         expectPlayer1Score(17);
     });
@@ -215,6 +220,7 @@ describe('Oware', function() {
         setMatchState(matchState2, 'passAndPlay');
         expectBoard(board2);
         clickDivAndExpectSeeds(1, 5, 0); // winning click!
+        browser.sleep(5000);
         expectBoard(board3);
         expectPlayer2Score(25);
     });
@@ -225,6 +231,7 @@ describe('Oware', function() {
         setMatchState(matchState4, 'passAndPlay');
         expectBoard(board5);
         clickDivAndExpectSeeds(0, 5, 0); // more than 11 seeds click!
+        browser.sleep(5000);
         expectBoard(board6);
     });
 });

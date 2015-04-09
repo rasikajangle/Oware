@@ -13,42 +13,47 @@
 
   <script src="http://yoav-zibin.github.io/emulator/dist/gameServices.min.js"></script>
 
+  <script src="http://yoav-zibin.github.io/emulator/dist/dragAndDropListeners.min.js"></script>
+
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
   <link rel="stylesheet" type="text/css" href="styles/game.css">
 </head>
 <body ng-cloak ng-controller="Ctrl">
 
+
+<div class="board-divider"></div>
+<div class="score-pit top">
+  <div class="pit-seeds" id="e2e_test_player1score">{{getScore(0)}}</div>
+</div>
+
+<div class="score-pit bottom">
+  <div class="pit-seeds" id="e2e_test_player2score">{{getScore(1)}}</div>
+</div>
+
 <div id="gameArea">
   <div class="board">
 
-    <div style="position: absolute; top:50%; left:0; width:16%; height:50%;">
-      <div class="pit score" style="top:-15%;position:relative">
-        <div class="score-label" style="top: -25%;">Player 1</div>
-        <div class="seeds" id="e2e_test_player1score">{{scores[0]}}</div>
-      </div>
-    </div>
-    <div style="position: absolute; top:50%; right:0; width:16%; height:50%;">
-      <div class="pit score" style="top:-15%;position:relative">
-        <div class="score-label" style="bottom: -25%;">Player 2</div>
-        <div class="seeds" id="e2e_test_player2score">{{scores[1]}}</div>
-      </div>
-    </div>
-
-    <div class="board-divider"></div>
-    
+<!--     <div style="position: absolute; top:50%; left:0; width:16%; height:50%;">
+  <div class="pit score" style="top:-15%;position:relative">
+    <div class="score-label" style="top: -25%;">Player 1</div>
+    <div class="seeds" id="e2e_test_player1score">{{scores[0]}}</div>
+  </div>
+</div>
+<div style="position: absolute; top:50%; right:0; width:16%; height:50%;">
+  <div class="pit score" style="top:-15%;position:relative">
+    <div class="score-label" style="bottom: -25%;">Player 2</div>
+    <div class="seeds" id="e2e_test_player2score">{{scores[1]}}</div>
+  </div>
+</div> -->
     <div ng-repeat="row in [0, 1]"
         style="position:absolute; top:{{row * 50}}%; left:0; width:100%; height:50%;">
       <div ng-repeat="col in [0, 1, 2, 3, 4, 5]"
-          style="position:absolute; top:0; left:{{col * 16.6}}%; width:16.6%; height:100%;"
-          ng-click="cellClicked(row, col)"
+          style="position:absolute; top:0; left:{{col * 16.7}}%; width:16.7%; height:100%;"
           id="{{'e2e_test_div_' + row + 'x' + col}}">
-        <div class="pit">
+        <div ng-class="{pit: true, top: row == 0, bottom: row == 1, valid:isValid(row,col)}" id="{{'pit_'+ row + 'x' + col}}">
           <div class="seeds" id="{{'e2e_test_seeds_'+ row + 'x' + col}}">{{getSeeds(row, col)}}</div>
         </div>
-  <!--       <div ng-class="{piece: true, slowlyAppear: shouldSlowlyAppear(row, col)}"
-            ng-show="shouldShowImage(row, col)">
-            {{getImageSrc(row, col)}}
-           </div> -->
+
       </div>
     </div>
   </div>

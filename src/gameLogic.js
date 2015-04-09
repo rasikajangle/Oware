@@ -11,14 +11,14 @@ angular.module('myApp', []).factory('gameLogic', function() {
   		return (board[row][col]) > (row === 0 ? col : 5 - col);
   	}
  
- 	function hasHousesThatCanSowOpponent(board, turnIndex) {
-		for(var i = 0; i < 6; i++) {
-			if(canSowOpponent(board, turnIndex, i)) {
-				return true;
-			}
-		}
- 		return false;
- 	}
+    function hasHousesThatCanSowOpponent(board, turnIndex) {
+        for(var i = 0; i < 6; i++) {
+        	if(canSowOpponent(board, turnIndex, i)) {
+        		return true;
+        	}
+        }
+    	return false;
+    }
 
   	function getSeedsInRow(board, rowIndex) {
   		var seeds = 0;
@@ -92,11 +92,12 @@ angular.module('myApp', []).factory('gameLogic', function() {
 				return false;
 		  	}
 		} catch (e) {
+            console.log(e);
 	  		// if there are any exceptions then the move is illegal
 	  		return false;
 		}
 		return true;
-  }
+    }
 
     /**
     * Returns all the possible moves for the given board and turnIndex.
@@ -104,16 +105,13 @@ angular.module('myApp', []).factory('gameLogic', function() {
     */
     function getPossibleMoves(board, turnIndex, scores) {
         var possibleMoves = [];
-        var i, j;
-        for (i = 0; i < 6; i++) {
-          	for (j = 0; j < 6; j++) {
-        		try {
-        	  		possibleMoves.push(createMove(board, i, j, turnIndex, scores));
-        		} catch (e) {
-        	  		// The cell in that position was full.
-        		}
-          	}
-        }
+      	for (var j = 0; j < 6; j++) {
+      		try {
+      	  		possibleMoves.push(createMove(board, turnIndex, j, turnIndex, scores));
+      		} catch (e) {
+      	  		// The cell in that position was full.
+      		}
+      	}
         return possibleMoves;
     }
   
