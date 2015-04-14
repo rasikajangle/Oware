@@ -227,8 +227,11 @@ angular.module('myApp') .controller('Ctrl',
   	function getUpdatePos(row, col, board1, board2) {
   		var updates = [], captures = [];
   		var pos = {row: row, col: col}, diff, val = board1[row][col];
-  		while(val--){
+  		while(val){
   			pos = getNextPos(pos.row, pos.col);
+            if(pos.row === row && pos.col === col) {
+                continue;
+            }
   			diff = board2[pos.row][pos.col] - board1[pos.row][pos.col];
   			if(diff > 0) {
   				updates.push({row: pos.row, col: pos.col});
@@ -237,6 +240,7 @@ angular.module('myApp') .controller('Ctrl',
   				updates.push({row: pos.row, col: pos.col});
   				captures.push({row: pos.row, col: pos.col});
   			}
+            val--;
   		}
   		captures.reverse();
   		return { updates: updates, captures: captures };

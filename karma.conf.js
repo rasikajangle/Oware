@@ -12,7 +12,10 @@ module.exports = function(config){
       'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js',
       'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-mocks.js',
       'src/gameLogic.js',
-      'src/gameLogicTest.js'
+      'src/gameLogicTest.js',
+      'http://yoav-zibin.github.io/emulator/alphaBetaService.js',
+      'src/aiService.js',
+      'src/aiServiceTest.js'
     ],
 
     reporters: ['progress', 'coverage'],
