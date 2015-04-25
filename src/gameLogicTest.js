@@ -8,6 +8,10 @@ describe("In Oware", function() {
 		_gameLogic = gameLogic;
 	}));
 
+	function expectPossibleMovesOk(board, turnIndex, scores, result) {
+		expect(_gameLogic.getPossibleMoves(board, turnIndex, scores)).toEqual([result]);
+	}
+
 	function expectMoveOk(turnIndexBeforeMove, stateBeforeMove, move) {
 		expect(_gameLogic.isMoveOk({turnIndexBeforeMove: turnIndexBeforeMove, stateBeforeMove: stateBeforeMove, move: move})).toBe(true);
 	}
@@ -15,8 +19,19 @@ describe("In Oware", function() {
 	function expectIllegalMove(turnIndexBeforeMove, stateBeforeMove, move) {
 		expect(_gameLogic.isMoveOk({turnIndexBeforeMove: turnIndexBeforeMove, stateBeforeMove: stateBeforeMove, move: move})).toBe(false);
 	}
-  
-  	it("placing seeds from 1x3 in consecutive positions from initial state is legal", function() {
+
+	it("getting correct possible moves", function() {
+		var board = [[0, 2, 0, 0, 0, 0], [0, 0, 0, 0, 2, 0]];
+	expectPossibleMovesOk( 
+		board, 1, [22, 22],
+		[{setTurn: {turnIndex : 0}},
+			{set: {key: 'board', value: [[0, 2, 0, 0, 0, 1], [0, 0, 0, 0, 0, 1]]}},
+			{set: {key: 'delta', value: {row: 1, col: 4}}},
+			{set: {key: 'scores' , value: [22, 22]}}
+		]);
+	});
+	
+	it("placing seeds from 1x3 in consecutive positions from initial state is legal", function() {
 	expectMoveOk(1, 
 		{board: undefined, scores: [0, 0]},
 		[{setTurn: {turnIndex : 0}},
@@ -25,7 +40,7 @@ describe("In Oware", function() {
 			{set: {key: 'scores' , value: [0, 0]}}
 		]);
 	});
-	
+  
 	it("placing seeds from 0x1 house in consecutive positions from initial state is legal", function() {
 	expectMoveOk(0, 
 		{board: [[4, 4, 4, 4, 5, 5], [4, 4, 4, 0, 5, 5]], scores: [0, 0]},
@@ -73,7 +88,7 @@ describe("In Oware", function() {
 	 * 
 	 * A test case to cover the Tie condition has been added below.
 	 */
-
+	 
 	it("placing seeds from house slot at 1x4 when there is already a tie is illegal", function() {
 	var  firstOperation = {endMatch: {endMatchScores: [0,0]}};
 	expectIllegalMove(1,
@@ -136,7 +151,6 @@ describe("In Oware", function() {
 			{set: {key: 'scores' , value: [17, 18]}}
 		]);
 	});
-
 
 	/* Additional test cases.
 	 * Author: Jugal Manjeshwar
@@ -213,5 +227,4 @@ describe("In Oware", function() {
 			{set: {key: 'scores' , value: [23, 25]}}
 		]);
 	});
-
 });

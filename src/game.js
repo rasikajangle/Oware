@@ -219,7 +219,7 @@ angular.module('myApp') .controller('Ctrl',
 
 	
     function sendComputerMove() {
-        var items = gameLogic.getPossibleMoves($scope.board, $scope.captures, $scope.turnIndex);
+        var items = gameLogic.getPossibleMoves($scope.board, $scope.turnIndex, $scope.scores);
         gameService.makeMove(items[Math.floor(Math.random()*items.length)]);
     }
    

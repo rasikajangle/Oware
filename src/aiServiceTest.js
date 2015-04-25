@@ -93,5 +93,4 @@ describe("aiService", function() {
          [10, 0, 0, 0, 0, 5]],[3, 15], 1, {maxDepth: 2});
     expect(angular.equals(move[2].set.value, {row: 1, col: 0})).toBe(true);
   });
-
 });
