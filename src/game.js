@@ -1,6 +1,11 @@
-angular.module('myApp') .controller('Ctrl',
-	['$scope', '$log', '$timeout', 'gameService', 'stateService', 'gameLogic', 'resizeGameAreaService', 
-	function ($scope, $log, $timeout, gameService, stateService, gameLogic,  resizeGameAreaService) {
+angular.module('myApp')
+  .controller('Ctrl',
+      ['$rootScope', '$scope', '$log', '$timeout',
+       'gameService', 'stateService', 'gameLogic', 'aiService',
+       'resizeGameAreaService', '$translate', 'dragAndDropService',
+      function ($rootScope, $scope, $log, $timeout,
+        gameService, stateService, gameLogic, aiService,
+        resizeGameAreaService, $translate, dragAndDropService) {
 
 	'use strict';
 
@@ -91,7 +96,7 @@ angular.module('myApp') .controller('Ctrl',
             }
         }
     }
-    window.handleDragEvent = handleDrag;
+    dragAndDropService.addDragListener("gameArea", handleDrag);
 
     function setDraggingPiece(row, col) {
     	var topLeft = getSquareTopLeft(row, col);
@@ -324,4 +329,4 @@ angular.module('myApp') .controller('Ctrl',
 	  isMoveOk: gameLogic.isMoveOk,
 	  updateUI: updateUI
 	});
-  }]);
+}]);

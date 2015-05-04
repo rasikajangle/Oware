@@ -88,7 +88,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 			var scores = stateBeforeMove.scores;
 			var expectedMove = createMove(board, row, col, turnIndexBeforeMove, scores);
 			if (!angular.equals(move, expectedMove)) {
-				console.log(JSON.stringify(move, null, 2), JSON.stringify(expectedMove, null, 2));
+				//console.log(JSON.stringify(move, null, 2), JSON.stringify(expectedMove, null, 2));
 				return false;
 		  	}
 		} catch (e) {
@@ -105,13 +105,16 @@ angular.module('myApp', []).factory('gameLogic', function() {
     */
     function getPossibleMoves(board, turnIndex, scores) {
         var possibleMoves = [];
-      	for (var j = 0; j < 6; j++) {
-      		try {
-      	  		possibleMoves.push(createMove(board, turnIndex, j, turnIndex, scores));
-      		} catch (e) {
-      	  		// The cell in that position was full.
-      		}
-      	}
+    	for (var j = 0; j < 6; j++) {
+    		try {
+                if (board[turnIndex][j] !== 0){
+                    possibleMoves.push(createMove(board, turnIndex, j, turnIndex, scores));
+                }
+    		} catch (e) {
+    	  		// The cell in that position was full.
+    		}
+    	}
+
         return possibleMoves;
     }
   
@@ -220,9 +223,14 @@ angular.module('myApp', []).factory('gameLogic', function() {
       isMoveOk: isMoveOk
     };
 
-});;angular.module('myApp') .controller('Ctrl',
-	['$scope', '$log', '$timeout', 'gameService', 'stateService', 'gameLogic', 'resizeGameAreaService', 
-	function ($scope, $log, $timeout, gameService, stateService, gameLogic,  resizeGameAreaService) {
+});;angular.module('myApp')
+  .controller('Ctrl',
+      ['$rootScope', '$scope', '$log', '$timeout',
+       'gameService', 'stateService', 'gameLogic', 'aiService',
+       'resizeGameAreaService', '$translate', 'dragAndDropService',
+      function ($rootScope, $scope, $log, $timeout,
+        gameService, stateService, gameLogic, aiService,
+        resizeGameAreaService, $translate, dragAndDropService) {
 
 	'use strict';
 
@@ -313,7 +321,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
             }
         }
     }
-    window.handleDragEvent = handleDrag;
+    dragAndDropService.addDragListener("gameArea", handleDrag);
 
     function setDraggingPiece(row, col) {
     	var topLeft = getSquareTopLeft(row, col);
@@ -441,7 +449,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 
 	
     function sendComputerMove() {
-        var items = gameLogic.getPossibleMoves($scope.board, $scope.captures, $scope.turnIndex);
+        var items = gameLogic.getPossibleMoves($scope.board, $scope.turnIndex, $scope.scores);
         gameService.makeMove(items[Math.floor(Math.random()*items.length)]);
     }
    
@@ -546,7 +554,7 @@ angular.module('myApp', []).factory('gameLogic', function() {
 	  isMoveOk: gameLogic.isMoveOk,
 	  updateUI: updateUI
 	});
-  }]);;angular.module('myApp').factory('aiService',
+}]);;angular.module('myApp').factory('aiService',
     ["alphaBetaService", "gameLogic",
       function(alphaBetaService, gameLogic) {
 
