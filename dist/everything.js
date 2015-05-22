@@ -1,4 +1,4 @@
-angular.module('myApp', []).factory('gameLogic', function() {
+angular.module('myApp', ['ngTouch', 'ui.bootstrap']).factory('gameLogic', function() {
 	'use strict';
 
   	/** Returns the initial Oware board, which is a 2x6 matrix containing 4. */
